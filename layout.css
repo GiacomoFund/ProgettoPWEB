@@ -1,0 +1,71 @@
+/* Struttura generale */
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    height: 100vh;
+    margin: 0;
+}
+
+#topbar {
+    background-color: var(--accent-color);
+    color: white;
+    padding: 1em;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#main-container {
+    display: flex;
+    flex: 1 1 0;
+    min-height: 0;
+    min-width: 0;
+    height: 100vh;
+}
+
+#sidebar {
+    width: 250px;
+    background-color: var(--sidebar-bg);
+    display: flex;
+    flex-direction: column;
+    padding: 1em;
+    gap: 0.5em;
+    height: 100%; /* prende tutta l'altezza disponibile nel main-container */
+    box-sizing: border-box;
+}
+
+#sidebar-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 1em;
+    margin-bottom: auto;
+}
+
+#sidebar-bottom {
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+#canvas-container {
+    flex: 1 1 0;
+    min-width: 0;
+    min-height: 0;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--canvas-bg);
+}
+
+canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    background-color: var(--canvas-bg);
+}

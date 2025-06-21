@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Graph Visualizer</title>
+  <link rel="stylesheet" href="../css/style.css" />
+  <script type="module" src="../js/main.js"></script>
+</head>
+
+<body>
+  <header id="topbar">
+    <h1>Graph Visualizer</h1>
+    <button id="themeToggle">🌙 Modalità Scura</button>
+  </header>
+
+  <div id="main-container">
+    <aside id="sidebar">
+      <label class="slider-label">
+        <div class="slider-label-row">
+          Repulsione tra nodi:
+          <span id="repulsionValue" class="slider-value"></span>
+        </div>
+        <input type="range" id="repulsionRange" min="0" max="100" value="50">
+      </label>
+      <label class="slider-label">
+        <div class="slider-label-row">
+          Attrazione degli archi:
+          <span id="attractionValue" class="slider-value"></span>
+        </div>
+        <input type="range" id="attractionRange" min="0" max="100" value="50">
+      </label>
+      <label class="slider-label">
+        <div class="slider-label-row">
+          Smorzamento:
+          <span id="dampingValue" class="slider-value"></span>
+        </div>
+        <input type="range" id="dampingRange" min="0" max="1000" value="1000">
+      </label>
+      
+      <div id="sidebar-actions">
+        <button id="deleteBtn">❌ Elimina Nodi/Archi</button>
+        <button id="resetBtn">💣 Reset</button>
+      </div>
+      <div id="sidebar-bottom">
+        <button id="randomizeBtn">🔀 Randomizza</button>
+        <button id="optimizeBtn">⚡ Layout Ottimale</button>
+      </div>
+    </aside>
+
+    <div id="canvas-container">
+      <canvas id="canvas"></canvas>
+    </div>
+  </div>
+
+  <div class="promptBox" id="edgePrompt">
+    <label id="edgePromptLabel">
+      Lunghezza a riposo:
+      <input id="edgeWeightInput" type="number" min="1" step="1">
+    </label>
+    <button id="edgePromptOkBtn">OK</button>
+  </div>
+
+  <div class="promptBox" id="nodePrompt">
+    <label id="nodePromptLabel">
+      Massa nodo:
+      <input id="nodeMassInput" type="number" min="1" step="1">
+    </label>
+    <button id="nodePromptOkBtn">OK</button>
+  </div>
+</body>
+</html>
