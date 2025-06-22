@@ -10,7 +10,7 @@ body {
 #topbar {
     background-color: var(--accent-color);
     color: white;
-    padding: 1em;
+    padding: 1em; 
     display: flex;
     justify-content: space-between;
     align-items: center;
