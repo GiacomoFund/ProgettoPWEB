@@ -67,7 +67,7 @@ export function drawGraph() {
     });
 
     // Mostra la massa solo se tutti i nodi hanno massa diversa da 10
-    const showMass = nodes.some(nodes => nodes.weight !== 10);
+    const showMass = nodes.some(nodes => nodes.massa !== 10);
 
     nodes.forEach(node => {
         ctx.beginPath();
