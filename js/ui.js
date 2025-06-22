@@ -6,14 +6,25 @@ import {
 import { drawGraph } from './draw.js';
 import { sliderToDamping } from './utils.js';
 import { fruchtermanReingoldLayout, frLayoutActive } from './layout.js';
+import { justClosedForm, resetJustClosedForm } from './auth.js';
+import { AuthContext } from './authContext.js';
+import * as userInfo from './userInfo.js';
+import * as apiContext from './apiContext.js';
+import { loadAndShowGraphs } from './card.js';
 
-// Variabili locali per la UI
+
 let forzaRepulsione = 1000;
 let forzaAttrazione = 100;
 let damping = 0.99;
-let ratio = 1;
 
 export function inizializza() {
+    const authContext = new AuthContext(apiContext, userInfo);
+    window.authContext = authContext;
+
+    document.getElementById("logout-btn").addEventListener("click", () => {
+        authContext.logout();
+    });
+
     document.getElementById("themeToggle").addEventListener("click", changetheme);
 
     const canvas = document.getElementById("canvas");
@@ -21,7 +32,7 @@ export function inizializza() {
 
     canvas.addEventListener("click", canvasClick);
 
-    // Slider repulsione
+    
     const repulsionSlider = document.getElementById("repulsionRange");
     const repulsionValue = document.getElementById("repulsionValue");
     forzaRepulsione = Number(repulsionSlider.value) * 1000;
@@ -32,7 +43,7 @@ export function inizializza() {
         repulsionValue.textContent = forzaRepulsione.toFixed(0);
     });
 
-    // Slider attrazione
+    
     const attractionSlider = document.getElementById("attractionRange");
     const attractionValue = document.getElementById("attractionValue");
     forzaAttrazione = Number(attractionSlider.value) * 2;
@@ -43,7 +54,7 @@ export function inizializza() {
         attractionValue.textContent = forzaAttrazione.toFixed(0);
     });
 
-    // Slider damping
+    
     const dampingSlider = document.getElementById("dampingRange");
     const dampingValue = document.getElementById("dampingValue");
     damping = sliderToDamping(dampingSlider.value);
@@ -54,28 +65,28 @@ export function inizializza() {
         dampingValue.textContent = damping.toFixed(3);
     });
 
-    // Gestione tasto elimina
+    
     const deleteBtn = document.getElementById("deleteBtn");
     deleteBtn.addEventListener("click", () => {
         setDeleteMode(!deleteMode);
         deleteBtn.classList.toggle("delete-active", deleteMode);
     });
 
-    // Gestione tasto reset
+    
     const resetBtn = document.getElementById("resetBtn");
     resetBtn.addEventListener("click", () => resetGraph(drawGraph));
 
-    // Gestione tasto ottimizza
+    
     const optimizeBtn = document.getElementById("optimizeBtn");
     optimizeBtn.addEventListener("click", () => {
         fruchtermanReingoldLayout(600);
     });
 
-    // Gestione tasto randomizza
+    
     const randomizeBtn = document.getElementById("randomizeBtn");
     randomizeBtn.addEventListener("click", randomizeNodePositions);
 
-    // Drag & drop nodi
+    
     canvas.addEventListener("mousedown", function(e) {
         const rect = canvas.getBoundingClientRect();
         const scaleX = canvas.width / rect.width;
@@ -119,7 +130,7 @@ export function inizializza() {
 
     setInterval(() => {
         if (!simulationPaused) {
-            aggiornaPosizioni(0.016);
+            aggiornaPosizioni(0.010);
             drawGraph();
         }
     }, 16);
@@ -143,8 +154,12 @@ function canvasClick(e) {
     if (frLayoutActive) return;
 
     if (justDraggedNode) {
-        setJustDraggedNode(false); // resetta per il prossimo click
-        return; // ignora il click dopo un drag
+        setJustDraggedNode(false); 
+        return; 
+    }
+    if (justClosedForm) {
+        resetJustClosedForm();
+        return;
     }
 
     const canvas = document.getElementById("canvas");
@@ -159,17 +174,17 @@ function canvasClick(e) {
         const node = findNodeNear(x, y);
         if (node) {
             const idx = node.indice;
-            // Rimuovi il nodo
-            nodes.splice(idx, 1);
-            // Aggiorna indici dei nodi
-            nodes.forEach((n, i) => n.indice = i);
-            // Rimuovi tutti gli archi collegati
+            
             for (let i = edges.length - 1; i >= 0; i--) {
                 if (edges[i].from === idx || edges[i].to === idx) {
                     edges.splice(i, 1);
                 }
             }
-            // Aggiorna gli indici degli archi rimasti
+            
+            nodes.splice(idx, 1);
+            
+            nodes.forEach((n, i) => n.indice = i);
+            
             edges.forEach(e => {
                 if (e.from > idx) e.from--;
                 if (e.to > idx) e.to--;
@@ -190,7 +205,6 @@ function canvasClick(e) {
     const node = findNodeNear(x, y);
     if (node) {
         if (!selectedNode) {
-            // Seleziona il nodo
             nodes.forEach(n => n.selected = false);
             node.selected = true;
             setSelectedNode(node);
@@ -198,7 +212,6 @@ function canvasClick(e) {
             showNodePrompt(node);
             return;
         } else {
-            // Crea arco se non già esistente
             if (!edges.some(e => (e.from === selectedNode.indice && e.to === node.indice) ||
                                  (e.from === node.indice && e.to === selectedNode.indice))) {
                 edges.push(new Edge(selectedNode.indice, node.indice, 10));
@@ -210,7 +223,7 @@ function canvasClick(e) {
         return;
     }
 
-    // Se un nodo è selezionato e si clicca altrove, deseleziona
+    
     if (selectedNode) {
         selectedNode.selected = false;
         setSelectedNode(null);
@@ -218,7 +231,7 @@ function canvasClick(e) {
         return;
     }
 
-    // Controlla se hai cliccato su un arco
+    
     const edge = findEdgeNear(x, y);
     if (edge) {
         setEditingEdge(edge);
@@ -226,7 +239,7 @@ function canvasClick(e) {
         return;
     }
 
-    // Altrimenti aggiungi nodo
+    
     nodes.forEach(n => n.selected = false);
     addNode(x, y);
     setSelectedNode(null);
@@ -255,7 +268,7 @@ function showEdgePrompt(edge) {
 
     function cleanup() {
         promptDiv.style.display = "none";
-        setEditingEdge(null); // <-- aggiungi qui!
+        setEditingEdge(null); 
         okBtn.removeEventListener("click", onOk);
         input.removeEventListener("keydown", onEnter);
         document.removeEventListener("mousedown", onOutside, true);
@@ -265,7 +278,7 @@ function showEdgePrompt(edge) {
     function onOk() {
         const w = parseInt(input.value);
         if (!isNaN(w) && w > 0) {
-            edge.weight = w; // <-- Modifica il peso dell'arco esistente
+            edge.weight = w; 
             drawGraph();
         }
         cleanup();
@@ -348,7 +361,7 @@ function randomizeNodePositions() {
     drawGraph();
 }
 
-// --- Funzione di simulazione (puoi modularizzare ulteriormente se vuoi) ---
+// --- Funzione di simulazione ---
 import { calcolaForze } from './graph.js';
 
 function aggiornaPosizioni(dt = 0.016) {
@@ -357,13 +370,13 @@ function aggiornaPosizioni(dt = 0.016) {
         node._oldAy = node.ay;
     });
 
-    // 2. Aggiorna le posizioni (Velocity Verlet step 1)
+    
     nodes.forEach(node => {
         node.x += node.vx * dt + 0.5 * node.ax * dt * dt;
         node.y += node.vy * dt + 0.5 * node.ay * dt * dt;
     });
 
-    // 3. Calcola le nuove accelerazioni
+    
     calcolaForze(forzaRepulsione, forzaAttrazione, damping);
 
     nodes.forEach(node => {
@@ -372,7 +385,7 @@ function aggiornaPosizioni(dt = 0.016) {
         node.vx *= (1-damping);
         node.vy *= (1-damping);
 
-        // Limita i nodi ai bordi del canvas
+        
         const canvas = document.getElementById("canvas");
         const width = canvas.width;
         const height = canvas.height;

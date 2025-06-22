@@ -42,7 +42,7 @@ export function drawGraph() {
         ty = y => y * scale + offsetY;
     }
     const showWeights = edges.some(edge => edge.weight !== 10);
-    
+
     ctx.lineWidth = NODE_RADIUS/10;
     edges.forEach(edge => {
         const n1 = nodes[edge.from];
@@ -66,7 +66,6 @@ export function drawGraph() {
         }
     });
 
-    // Mostra la massa solo se tutti i nodi hanno massa diversa da 10
     const showMass = nodes.some(nodes => nodes.massa !== 10);
 
     nodes.forEach(node => {
@@ -79,7 +78,6 @@ export function drawGraph() {
         }
         ctx.fill();
 
-        // Disegna la massa al centro del nodo se richiesto
         if (showMass) {
             ctx.save();
             ctx.fillStyle = "#fff";

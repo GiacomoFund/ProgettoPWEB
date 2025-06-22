@@ -31,11 +31,11 @@ export function fruchtermanReingoldLayout(iterations = 200) {
         edges,
         temperature: width / 10,
         currentIter: 0,
-        slowSteps: 20, // Quanti passi lenti vuoi
-        mediuSteps: 50, // Quanti passi medi
-        fastInterval: 10,  // ms per i passi veloci
-        mediumInterval: 50, // ms per i passi medi
-        slowInterval: 100 // ms per i passi lenti
+        fastInterval: 5,  
+        mediuSteps: 50, 
+        mediumInterval: 50, 
+        slowSteps: 20, 
+        slowInterval: 100 
     };
 
     frLayoutActive = true;
@@ -75,9 +75,9 @@ function fruchtermanReingoldStep() {
         const dx = n1.x - n2.x;
         const dy = n1.y - n2.y;
         const dist = Math.hypot(dx, dy) || 0.01;
-        // Lunghezza ideale dell'arco (puoi regolare la formula)
+        
         const desired = (40 + edge.weight * 10);
-        // Forza attrattiva proporzionale alla differenza tra distanza attuale e desiderata
+        
         const force = ((dist - desired) * dist) * 10 / k;
         const fx = (dx / dist) * force;
         const fy = (dy / dist) * force;
@@ -92,19 +92,19 @@ function fruchtermanReingoldStep() {
         const dx = n.fr_dx;
         const dy = n.fr_dy;
         const disp = Math.hypot(dx, dy) || 0.01;
-        // Applica la massa: accelerazione = forza / massa
+        
         n.x += ((dx / disp) * Math.min(temperature, disp)) * 10 / n.massa;
         n.y += ((dy / disp) * Math.min(temperature, disp)) * 10 / n.massa;
     });
 
-    frLayoutState.temperature *= 0.97;
+    frLayoutState.temperature *= 0.98;
     frLayoutState.currentIter++;
 
 
 
     drawGraph();
 
-    // Cambio velocità dopo i primi passi
+    
     if (frLayoutState.currentIter === frLayoutState.slowSteps) {
         clearInterval(fruchtermanInterval);
         fruchtermanInterval = setInterval(fruchtermanReingoldStep, frLayoutState.mediumInterval);
@@ -130,7 +130,7 @@ function fruchtermanReingoldStep() {
 }
 
 function centerAndScaleGraph(nodes, canvas, margin = NODE_RADIUS * 5) {
-    // Calcola bounding box
+    
     let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
     for (let n of nodes) {
         if (n.x < minX) minX = n.x;
@@ -147,13 +147,13 @@ function centerAndScaleGraph(nodes, canvas, margin = NODE_RADIUS * 5) {
     const scaleY = targetHeight / (maxY - minY || 1);
     const scale = Math.min(scaleX, scaleY);
 
-    // Scala rispetto al bounding box
+    
     nodes.forEach(n => {
         n.x = (n.x - minX) * scale + margin;
         n.y = (n.y - minY) * scale + margin;
     });
 
-    // Centra il bounding box nel canvas
+    
     let newMinX = Math.min(...nodes.map(n => n.x));
     let newMaxX = Math.max(...nodes.map(n => n.x));
     let newMinY = Math.min(...nodes.map(n => n.y));

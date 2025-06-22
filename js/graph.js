@@ -33,7 +33,7 @@ export let dragTarget = { x: 0, y: 0 };
 export let justDraggedNode = false;
 export let simulationPaused = false;
 
-// Utility per aggiornare array/oggetti esportati
+
 export function setNodes(newNodes) { nodes = newNodes; }
 export function setEdges(newEdges) { edges = newEdges; }
 export function setSelectedNode(n) { selectedNode = n; }
@@ -91,7 +91,7 @@ export function calcolaForze(forzaRepulsione = 1000, forzaAttrazione = 100) {
         n.ay = 0;
     });
 
-    // Forze repulsive tra tutti i nodi
+    
     for (let i = 0; i < nodes.length; i++) {
         for (let j = i + 1; j < nodes.length; j++) {
             const dx = nodes[j].x - nodes[i].x;
@@ -104,7 +104,7 @@ export function calcolaForze(forzaRepulsione = 1000, forzaAttrazione = 100) {
             const fx = F * dx / d;
             const fy = F * dy / d;
 
-            // Applica la forza SOLO se il nodo NON è draggingNode
+            
             if (nodes[i] !== draggingNode) {
                 nodes[i].ax -= fx / nodes[i].massa;
                 nodes[i].ay -= fy / nodes[i].massa;
@@ -116,14 +116,16 @@ export function calcolaForze(forzaRepulsione = 1000, forzaAttrazione = 100) {
         }
     }
 
-    // Forze di attrazione sugli archi
+    
     edges.forEach(edge => {
         const n1 = nodes[edge.from];
         const n2 = nodes[edge.to];
         const dx = n2.x - n1.x;
         const dy = n2.y - n1.y;
         const dist = Math.hypot(dx, dy);
+
         const desired = (40 + edge.weight * 10) * ratio;
+        
         const k = forzaAttrazione * 0.01;
         const F = k * (dist - desired);
 
@@ -141,7 +143,7 @@ export function calcolaForze(forzaRepulsione = 1000, forzaAttrazione = 100) {
         }
     });
 
-    // Forza di richiamo verso il centro SOLO SE il centro di massa è troppo distante
+    
     if (nodes.length > 0) {
         const canvas = document.getElementById("canvas");
         const centerX = canvas.width / 2;
