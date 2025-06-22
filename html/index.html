@@ -16,27 +16,30 @@
 
   <div id="main-container">
     <aside id="sidebar">
-      <label class="slider-label">
+
+      <div class="slider-label">
         <div class="slider-label-row">
-          Repulsione tra nodi:
+          <label for="repulsionRange">Repulsione tra nodi:</label>
           <span id="repulsionValue" class="slider-value"></span>
         </div>
         <input type="range" id="repulsionRange" min="0" max="100" value="50">
-      </label>
-      <label class="slider-label">
+      </div>
+
+      <div class="slider-label">
         <div class="slider-label-row">
-          Attrazione degli archi:
+          <label for="attractionRange">Attrazione degli archi:</label>
           <span id="attractionValue" class="slider-value"></span>
         </div>
         <input type="range" id="attractionRange" min="0" max="100" value="50">
-      </label>
-      <label class="slider-label">
+      </div>
+
+      <div class="slider-label">
         <div class="slider-label-row">
-          Smorzamento:
+          <label for="dampingRange">Smorzamento:</label>
           <span id="dampingValue" class="slider-value"></span>
         </div>
-        <input type="range" id="dampingRange" min="0" max="1000" value="1000">
-      </label>
+        <input type="range" id="dampingRange" min="0" max="1000" value="0">
+      </div>
       
       <div id="sidebar-actions">
         <button id="deleteBtn">❌ Elimina Nodi/Archi</button>
